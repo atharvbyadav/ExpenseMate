@@ -53,7 +53,7 @@ elif page == "📊 View Report":
     df = pd.read_sql("SELECT * FROM expenses", conn)
 
     if not df.empty:
-        df["date"] = pd.to_datetime(df["date"])
+        df["date"] = pd.to_datetime(df["date"]).dt.date
         st.subheader("💼 Expense Details")
         st.dataframe(df[['id', 'date', 'time', 'category', 'description', 'amount']].rename(columns={"amount": "Amount (₹)"}))
 
@@ -82,10 +82,10 @@ elif page == "❌ Delete Expense":
     df = pd.read_sql("SELECT * FROM expenses", conn)
 
     if not df.empty:
-        df["date"] = pd.to_datetime(df["date"])
+        df["date"] = pd.to_datetime(df["date"]).dt.date
         df_sorted = df.sort_values(by="date", ascending=False)
 
-        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
+        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - "  + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
         expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
         delete_button = st.button("🗑️ Delete Selected Expense")
 
