@@ -43,7 +43,7 @@ if page == "➕ Add Expense":
 
         if submit:
             cursor.execute("INSERT INTO expenses (date, time, category, description, amount) VALUES (?, ?, ?, ?, ?)",
-                           (date.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S'), category, description, amount))
+                           (date.strftime('%Y-%m-%d'), time.strftime('%I:%M %p'), category, description, amount))
             conn.commit()
             st.success("✅ Expense added successfully!")
             st.rerun()
@@ -86,7 +86,7 @@ elif page == "❌ Delete Expense":
         df["date"] = pd.to_datetime(df["date"]).dt.date
         df_sorted = df.sort_values(by="date", ascending=False)
 
-        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
+        df_sorted["display"] = df_sorted["date"].astype(str) + " " + pd.to_datetime(df_sorted["time"]).dt.strftime('%I:%M %p') + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
         expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
         delete_button = st.button("🗑️ Delete Selected Expense")
 
