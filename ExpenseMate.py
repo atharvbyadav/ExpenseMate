@@ -85,11 +85,13 @@ elif page == "❌ Delete Expense":
         df["date"] = pd.to_datetime(df["date"])
         df_sorted = df.sort_values(by="date", ascending=False)
 
-        expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["id"].astype(str) + " - " + df_sorted["description"] + " (₹" + df_sorted["amount"].astype(str) + ")")
+        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
+        expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
         delete_button = st.button("🗑️ Delete Selected Expense")
 
         if delete_button:
-            expense_id = int(expense_to_delete.split(" - ")[0])
+            selected_row = df_sorted[df_sorted["display"] == expense_to_delete]
+            expense_id = selected_row["id"].values[0]
             cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
             conn.commit()
             st.success("✅ Expense deleted successfully!")
