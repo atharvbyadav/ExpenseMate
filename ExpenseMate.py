@@ -46,6 +46,7 @@ if page == "➕ Add Expense":
                            (date.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S'), category, description, amount))
             conn.commit()
             st.success("✅ Expense added successfully!")
+            st.rerun()
 
 elif page == "📊 View Report":
     st.title("📊 Expense Report")
@@ -85,17 +86,20 @@ elif page == "❌ Delete Expense":
         df["date"] = pd.to_datetime(df["date"]).dt.date
         df_sorted = df.sort_values(by="date", ascending=False)
 
-        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - "  + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
+        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
         expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
         delete_button = st.button("🗑️ Delete Selected Expense")
 
-        if delete_button:
+        if delete_button and expense_to_delete:
             selected_row = df_sorted[df_sorted["display"] == expense_to_delete]
-            expense_id = selected_row["id"].values[0]
-            cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
-            conn.commit()
-            st.success("✅ Expense deleted successfully!")
-            st.rerun()
+            if not selected_row.empty:
+                expense_id = int(selected_row["id"].values[0])
+                cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+                conn.commit()
+                st.success("✅ Expense deleted successfully!")
+                st.rerun()
+            else:
+                st.warning("⚠️ Error finding the selected expense.")
     else:
         st.warning("⚠️ No expenses to delete!")
 
