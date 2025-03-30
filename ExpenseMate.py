@@ -93,7 +93,7 @@ elif page == "❌ Delete Expense":
             cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
             conn.commit()
             st.success("✅ Expense deleted successfully!")
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.warning("⚠️ No expenses to delete!")
 
