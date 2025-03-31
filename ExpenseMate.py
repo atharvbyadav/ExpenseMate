@@ -35,8 +35,22 @@ if page == "➕ Add Expense":
 
     with st.form("expense_form"):
         date = st.date_input("📅 Date", datetime.today())
-        default_time = time(12, 0)  # Default to 12:00 PM
-        time_selected = st.time_input("⏰ Time", default_time)
+        
+        # Time selection in 12-hour format with AM/PM
+        hours = list(range(1, 13))
+        minutes = list(range(0, 60))
+        am_pm = ["AM", "PM"]
+        selected_hour = st.selectbox("🕒 Hour", hours, index=hours.index(12))
+        selected_minute = st.selectbox("⏳ Minute", minutes, index=minutes.index(0))
+        selected_am_pm = st.selectbox("☀️ AM/PM", am_pm)
+        
+        if selected_am_pm == "PM" and selected_hour != 12:
+            selected_hour += 12
+        elif selected_am_pm == "AM" and selected_hour == 12:
+            selected_hour = 0
+        
+        time_selected = time(selected_hour, selected_minute)
+
         category = st.selectbox("📌 Category", common_categories)
         description = st.text_input("📝 Description")
         amount = st.number_input("💵 Amount (₹)", min_value=0.01, step=0.01, format="%.2f")
