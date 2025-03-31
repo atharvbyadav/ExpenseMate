@@ -4,6 +4,9 @@ import sqlite3
 import plotly.express as px
 from datetime import datetime, time
 
+# App Title
+st.title("💰 ExpenseMate - Personal Finance Tracker")
+
 # Initialize database
 conn = sqlite3.connect("expenses.db", check_same_thread=False)
 cursor = conn.cursor()
