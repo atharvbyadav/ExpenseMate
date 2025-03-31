@@ -21,6 +21,10 @@ ExpenseMate is a user-friendly personal finance tracker built using **Streamlit*
 - Enter **description** and **amount**.
 - Store entries in an **SQLite database**.
 
+### ❌ Delete Expenses
+
+- Select any **recorded expense** to delete from the database.
+
 ### 📊 View Expense Report
 
 - **View all expenses** in a table format.
@@ -28,10 +32,6 @@ ExpenseMate is a user-friendly personal finance tracker built using **Streamlit*
 - **Line chart tracking** spending over time.
 - **Budget Summary** with total spent and remaining balance.
 - **Download expenses report** as a CSV file.
-
-### ❌ Delete Expenses
-
-- Select any **recorded expense** to delete from the database.
 
 ---
 
@@ -93,17 +93,17 @@ The application will open in your default web browser.
 4. Enter **description** and **amount**.
 5. Click **"Add Expense"** to save.
 
-### 📊 Viewing Reports
-
-- Click **"View Report"**.
-- View **expense details, category breakdown, and spending trends**.
-- **Download** the report as CSV.
-
 ### ❌ Deleting an Expense
 
 1. Click **"Delete Expense"**.
 2. Select an expense from the dropdown.
 3. Click **"Delete"** to remove it.
+
+### 📊 Viewing Reports
+
+- Click **"View Report"**.
+- View **expense details, category breakdown, and spending trends**.
+- **Download** the report as CSV.
 
 ---
 
