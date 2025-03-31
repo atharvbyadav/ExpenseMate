@@ -37,12 +37,13 @@ if page == "➕ Add Expense":
         date = st.date_input("📅 Date", datetime.today())
         
         # Time selection in 12-hour format with AM/PM
-        hours = list(range(1, 13))
-        minutes = list(range(0, 60))
-        am_pm = ["AM", "PM"]
-        selected_hour = st.selectbox("🕒 Hour", hours, index=hours.index(12))
-        selected_minute = st.selectbox("⏳ Minute", minutes, index=minutes.index(0))
-        selected_am_pm = st.selectbox("☀️ AM/PM", am_pm)
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            selected_hour = st.selectbox("🕒 Hour", list(range(1, 13)), index=11)
+        with col2:
+            selected_minute = st.selectbox("⏳ Minute", list(range(0, 60)), index=0)
+        with col3:
+            selected_am_pm = st.selectbox("☀️ AM/PM", ["AM", "PM"])
         
         if selected_am_pm == "PM" and selected_hour != 12:
             selected_hour += 12
@@ -58,7 +59,7 @@ if page == "➕ Add Expense":
 
         if submit:
             cursor.execute("INSERT INTO expenses (date, time, category, description, amount) VALUES (?, ?, ?, ?, ?)",
-                           (date.strftime('%Y-%m-%d'), time_selected.strftime('%I:%M:%S %p'), category, description, amount))
+                           (date.strftime('%Y-%m-%d'), time_selected.strftime('%I:%M %p'), category, description, amount))
             conn.commit()
             st.success("✅ Expense added successfully!")
             st.rerun()
@@ -70,7 +71,7 @@ elif page == "📊 View Report":
 
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"]).dt.date
-        df["time"] = pd.to_datetime(df["time"], format='%I:%M:%S %p').dt.strftime('%I:%M:%S %p')
+        df["time"] = pd.to_datetime(df["time"], format='%I:%M %p').dt.strftime('%I:%M %p')
 
         st.subheader("💼 Expense Details")
         st.dataframe(df[['id', 'date', 'time', 'category', 'description', 'amount']].rename(columns={"amount": "Amount (₹)"}))
@@ -100,7 +101,7 @@ elif page == "❌ Delete Expense":
 
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"]).dt.date
-        df["time"] = pd.to_datetime(df["time"], format='%I:%M:%S %p').dt.strftime('%I:%M:%S %p')
+        df["time"] = pd.to_datetime(df["time"], format='%I:%M %p').dt.strftime('%I:%M %p')
         df_sorted = df.sort_values(by="date", ascending=False)
 
         df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
