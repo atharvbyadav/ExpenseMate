@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import sqlite3
 import plotly.express as px
-from datetime import datetime
+from datetime import datetime, time
 
 # Initialize database
 conn = sqlite3.connect("expenses.db", check_same_thread=False)
@@ -35,7 +35,8 @@ if page == "➕ Add Expense":
 
     with st.form("expense_form"):
         date = st.date_input("📅 Date", datetime.today())
-        time = st.time_input("⏰ Time", datetime.now().time())
+        default_time = time(12, 0)  # Default to 12:00 PM
+        time_selected = st.time_input("⏰ Time", default_time)
         category = st.selectbox("📌 Category", common_categories)
         description = st.text_input("📝 Description")
         amount = st.number_input("💵 Amount (₹)", min_value=0.01, step=0.01, format="%.2f")
@@ -43,7 +44,7 @@ if page == "➕ Add Expense":
 
         if submit:
             cursor.execute("INSERT INTO expenses (date, time, category, description, amount) VALUES (?, ?, ?, ?, ?)",
-                           (date.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S'), category, description, amount))
+                           (date.strftime('%Y-%m-%d'), time_selected.strftime('%I:%M:%S %p'), category, description, amount))
             conn.commit()
             st.success("✅ Expense added successfully!")
             st.rerun()
@@ -55,6 +56,8 @@ elif page == "📊 View Report":
 
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"]).dt.date
+        df["time"] = pd.to_datetime(df["time"], format='%I:%M:%S %p').dt.strftime('%I:%M:%S %p')
+
         st.subheader("💼 Expense Details")
         st.dataframe(df[['id', 'date', 'time', 'category', 'description', 'amount']].rename(columns={"amount": "Amount (₹)"}))
 
@@ -74,7 +77,6 @@ elif page == "📊 View Report":
 
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Download Report as CSV", csv, "expenses_report.csv", "text/csv")
-
     else:
         st.warning("⚠️ No expenses recorded yet!")
 
@@ -84,6 +86,7 @@ elif page == "❌ Delete Expense":
 
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"]).dt.date
+        df["time"] = pd.to_datetime(df["time"], format='%I:%M:%S %p').dt.strftime('%I:%M:%S %p')
         df_sorted = df.sort_values(by="date", ascending=False)
 
         df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
