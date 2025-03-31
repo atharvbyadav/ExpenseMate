@@ -25,7 +25,7 @@ st.sidebar.title("💰 Budget Tracker")
 budget = st.sidebar.number_input("Set Monthly Budget (₹)", min_value=0.0, value=10000.0, step=500.0, format="%.2f")
 
 # Sidebar - Navigation
-page = st.sidebar.radio("📌 Navigate", ["➕ Add Expense", "📊 View Report", "❌ Delete Expense"])
+page = st.sidebar.radio("📌 Navigate", ["➕ Add Expense", "❌ Delete Expense", "📊 View Report"])
 
 # Autofill common categories
 common_categories = ["Food", "Rent", "Utilities", "Transport", "Entertainment", "Healthcare", "Shopping", "Miscellaneous"]
@@ -64,6 +64,32 @@ if page == "➕ Add Expense":
             st.success("✅ Expense added successfully!")
             st.rerun()
 
+elif page == "❌ Delete Expense":
+    st.title("❌ Delete Expense")
+    df = pd.read_sql("SELECT * FROM expenses", conn)
+
+    if not df.empty:
+        df["date"] = pd.to_datetime(df["date"]).dt.date
+        df["time"] = pd.to_datetime(df["time"], format='%I:%M %p').dt.strftime('%I:%M %p')
+        df_sorted = df.sort_values(by="date", ascending=False)
+
+        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
+        expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
+        delete_button = st.button("🗑️ Delete Selected Expense")
+
+        if delete_button and expense_to_delete:
+            selected_row = df_sorted[df_sorted["display"] == expense_to_delete]
+            if not selected_row.empty:
+                expense_id = int(selected_row["id"].values[0])
+                cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+                conn.commit()
+                st.success("✅ Expense deleted successfully!")
+                st.rerun()
+            else:
+                st.warning("⚠️ Error finding the selected expense.")
+    else:
+        st.warning("⚠️ No expenses to delete!")
+
 elif page == "📊 View Report":
     st.title("📊 Expense Report")
 
@@ -94,32 +120,6 @@ elif page == "📊 View Report":
         st.download_button("📥 Download Report as CSV", csv, "expenses_report.csv", "text/csv")
     else:
         st.warning("⚠️ No expenses recorded yet!")
-
-elif page == "❌ Delete Expense":
-    st.title("❌ Delete Expense")
-    df = pd.read_sql("SELECT * FROM expenses", conn)
-
-    if not df.empty:
-        df["date"] = pd.to_datetime(df["date"]).dt.date
-        df["time"] = pd.to_datetime(df["time"], format='%I:%M %p').dt.strftime('%I:%M %p')
-        df_sorted = df.sort_values(by="date", ascending=False)
-
-        df_sorted["display"] = df_sorted["date"].astype(str) + " " + df_sorted["time"] + " - " + df_sorted["category"] + " (₹" + df_sorted["amount"].astype(str) + ")"
-        expense_to_delete = st.selectbox("Select an expense to delete", df_sorted["display"])
-        delete_button = st.button("🗑️ Delete Selected Expense")
-
-        if delete_button and expense_to_delete:
-            selected_row = df_sorted[df_sorted["display"] == expense_to_delete]
-            if not selected_row.empty:
-                expense_id = int(selected_row["id"].values[0])
-                cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
-                conn.commit()
-                st.success("✅ Expense deleted successfully!")
-                st.rerun()
-            else:
-                st.warning("⚠️ Error finding the selected expense.")
-    else:
-        st.warning("⚠️ No expenses to delete!")
 
 # Close database connection
 conn.close()
