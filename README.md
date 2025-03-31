@@ -53,7 +53,7 @@ cd ExpenseMate
 To prevent package conflicts, create and activate a virtual environment:
 
 ```sh
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 ```
 
