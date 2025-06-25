@@ -2,7 +2,7 @@
 
 ## Overview
 
-ExpenseMate is a user-friendly personal finance tracker built using **Streamlit** and **SQLite**. It helps users monitor expenses, analyze spending habits, and manage their monthly budget with interactive visualizations.
+ExpenseMate is a user-friendly personal finance tracker built using **Streamlit** and **SQLite**. It helps users monitor expenses, analyze spending habits and manage their monthly budget with interactive visualizations.
 
 🚀 **Live Demo**: [ExpenseMate](https://expensemate.streamlit.app/)
 
@@ -102,7 +102,7 @@ The application will open in your default web browser.
 ### 📊 Viewing Reports
 
 - Click **"View Report"**.
-- View **expense details, category breakdown, and spending trends**.
+- View **expense details, category breakdown and spending trends**.
 - **Download** the report as CSV.
 
 ---
@@ -137,7 +137,7 @@ This project is licensed under the **MIT License** - feel free to use and modify
 
 Want to improve ExpenseMate? Contributions are welcome! 🎉
 
-Fork the repo, create a branch, and submit a pull request.
+Fork the repo, create a branch and submit a pull request.
 
 ---
 
